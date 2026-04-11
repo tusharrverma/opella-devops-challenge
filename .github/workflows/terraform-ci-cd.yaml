@@ -1,0 +1,52 @@
+name: Terraform CI/CD - Opella Challenge
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    name: Terraform ${{ matrix.environment }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment: [dev, prod]
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC - secure, no secrets in code)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.7.0"
+
+      - name: Terraform Init & Plan (${{ matrix.environment }})
+        run: |
+          cd environments/${{ matrix.environment }}
+          terraform init
+          terraform plan -out=plan.tfplan
+
+      - name: Terraform Apply - Dev
+        if: matrix.environment == 'dev'
+        run: |
+          cd environments/dev
+          terraform apply -auto-approve plan.tfplan
+
+      - name: Terraform Apply - Prod (requires manual approval)
+        if: matrix.environment == 'prod'
+        environment: production
+        run: |
+          cd environments/prod
+          terraform apply -auto-approve plan.tfplan

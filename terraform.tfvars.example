@@ -1,0 +1,2 @@
+# Copy this file to environments/dev/terraform.tfvars and environments/prod/terraform.tfvars
+# (already done in your environments folders)
