@@ -2,14 +2,14 @@
 ## Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.0 |
 | <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) | ~> 4.0 |
 
 ## Providers
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
 
 ## Modules
@@ -19,7 +19,7 @@ No modules.
 ## Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [azurerm_network_security_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_group) | resource |
 | [azurerm_network_security_rule.rdp](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule) | resource |
 | [azurerm_subnet.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet) | resource |
@@ -29,7 +29,7 @@ No modules.
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_address_space"></a> [address\_space](#input\_address\_space) | VNet address space | `list(string)` | <pre>[<br/>  "10.0.0.0/16"<br/>]</pre> | no |
 | <a name="input_create_nsg"></a> [create\_nsg](#input\_create\_nsg) | Whether to create and associate NSG | `bool` | `true` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment name (dev/prod) | `string` | n/a | yes |
@@ -41,9 +41,9 @@ No modules.
 ## Outputs
 
 | Name | Description |
-| ---- | ----------- |
-| <a name="output_nsg_id"></a> [nsg\_id](#output\_nsg\_id) | NSG ID (if created) |
-| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Map of subnet IDs (key = subnet name) |
-| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | The ID of the VNet |
-| <a name="output_vnet_name"></a> [vnet\_name](#output\_vnet\_name) | The name of the VNet |
+|------|-------------|
+| <a name="output_nsg_id"></a> [nsg\_id](#output\_nsg\_id) | ID of the Network Security Group (null if create\_nsg = false) |
+| <a name="output_subnet_ids"></a> [subnet\_ids](#output\_subnet\_ids) | Map of all subnet IDs (key = subnet name, e.g. app, private-endpoints) |
+| <a name="output_vnet_id"></a> [vnet\_id](#output\_vnet\_id) | The ID of the created Virtual Network |
+| <a name="output_vnet_name"></a> [vnet\_name](#output\_vnet\_name) | The name of the created Virtual Network |
 <!-- END_TF_DOCS -->
