@@ -19,7 +19,7 @@ Reusable Terraform module for Azure Virtual Network + multi-environment deployme
 ## Clean Code & Quality Process
 
 The following tools are automatically enforced in the CI pipeline:
-- `terraform fmt` — code formatting
+- `terraform fmt` — validate code formatting
 - `tflint` — linting and best practices
 - `trivy` — security and misconfiguration scanning
 - `terraform-docs` — auto-generated module documentation
