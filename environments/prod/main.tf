@@ -74,7 +74,7 @@ resource "azurerm_network_interface" "vm" {
 # Windows VM
 resource "azurerm_windows_virtual_machine" "this" {
   name                = "vm-opella-prod-westus"
-  computer_name       = "vmprodwestus"          # Max 15 characters
+  computer_name       = "vmprodwestus"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   size                = "Standard_DC1s_v3"
@@ -94,8 +94,6 @@ resource "azurerm_windows_virtual_machine" "this" {
     sku       = "2022-datacenter-azure-edition"
     version   = "latest"
   }
-
-  tags = { Environment = var.environment, Region = var.location }
 }
 
 # Storage Account
@@ -106,8 +104,6 @@ resource "azurerm_storage_account" "this" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   public_network_access_enabled = false
-
-  tags = { Environment = var.environment, Region = var.location }
 }
 
 # Private Endpoint
