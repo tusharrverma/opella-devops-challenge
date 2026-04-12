@@ -23,7 +23,13 @@ terraform {
 resource "azurerm_resource_group" "this" {
   name     = "rg-opella-dev-eastus"
   location = var.location
-  tags     = { Environment = var.environment, Region = var.location }
+
+  tags = {
+    Environment = var.environment
+    ManagedBy   = "Terraform"
+    Project     = "opella-challenge"
+    Region      = var.location
+  }
 }
 
 module "vnet" {
