@@ -21,7 +21,7 @@ terraform {
 }
 
 locals {
-  # Proper region short codes (Microsoft standard)
+  # Standardized short region codes (consistent across all resources)
   region_short = {
     "eastus" = "eus"
     "westus" = "wus"
@@ -31,7 +31,7 @@ locals {
 }
 
 resource "azurerm_resource_group" "this" {
-  name     = "rg-opella-${var.environment}-${replace(var.location, " ", "")}"
+  name     = "rg-opella-${var.environment}-${local.region_short}"
   location = var.location
   tags     = { Environment = var.environment, Region = var.location }
 }
@@ -54,7 +54,7 @@ resource "random_password" "vm" {
 
 # Windows VM resources
 resource "azurerm_public_ip" "vm" {
-  name                = "pip-opella-${var.environment}-${replace(var.location, " ", "")}"
+  name                = "pip-opella-${var.environment}-${local.region_short}"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   allocation_method   = "Static"
@@ -62,7 +62,7 @@ resource "azurerm_public_ip" "vm" {
 }
 
 resource "azurerm_network_interface" "vm" {
-  name                = "nic-opella-${var.environment}-${replace(var.location, " ", "")}"
+  name                = "nic-opella-${var.environment}-${local.region_short}"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
 
@@ -75,11 +75,11 @@ resource "azurerm_network_interface" "vm" {
 }
 
 resource "azurerm_windows_virtual_machine" "this" {
-  name                = "vm-opella-${var.environment}-${replace(var.location, " ", "")}"
-  computer_name       = "vm${var.environment}${local.region_short}"   # ≤ 15 characters
+  name                = "vm-opella-${var.environment}-${local.region_short}"
+  computer_name       = "vm${var.environment}${local.region_short}"   # Max 15 chars
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
-  size                = "Standard_B1ms"        # ← Changed to B1ms (more available)
+  size                = "Standard_DC1s_v3"
   admin_username      = "azureadmin"
   admin_password      = random_password.vm.result
 
@@ -102,7 +102,7 @@ resource "azurerm_windows_virtual_machine" "this" {
 
 # Storage Account
 resource "azurerm_storage_account" "this" {
-  name                     = local.storage_name
+  name                     = "stopella${var.environment}${local.region_short}"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = var.location
   account_tier             = "Standard"
