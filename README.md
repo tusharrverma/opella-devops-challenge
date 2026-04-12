@@ -1,38 +1,49 @@
 # Opella DevOps Technical Challenge
 
-Reusable Terraform module for Azure VNet + multi-environment deployment (dev + prod).
+Reusable Terraform module for Azure Virtual Network + multi-environment deployment.
 
-## Resources Created (per environment)
-- Resource Group
-- VNet + 2 subnets + NSG (via reusable module)
-- Windows VM (`Standard_B1s`) with random password
-- Storage Account (with Blob) + Private Endpoint (attached to VNet)
+## Architecture
 
-## Regions Used
-- **dev** → `eastus`
-- **prod** → `westus` (Microsoft’s official paired region for eastus)
-
-## Why Resource Groups per environment?
-Clear isolation, cost tracking, and safe deletion. In real production we would use separate subscriptions + Azure Policy.
-
-## Security & Best Practices
-- NSG allows only RDP (3389)
-- Storage Account is private (`public_network_access_enabled = false`) + Private Endpoint only
-- VM password generated with `random_password` (never committed to Git)
-- All resources tagged consistently with Environment + Region
-- Private endpoint subnet secured
+- **Reusable Module**: `modules/vnet/` — provisions VNet, subnets, and optional NSG
+- **Environments**:
+  - **Dev** → `eastus`
+  - **Prod** → `westus` (Microsoft paired region)
+- **Resources per environment**:
+  - Resource Group
+  - Virtual Network + Subnets + NSG (via reusable module)
+  - Windows Virtual Machine (`Standard_DC1s_v3`)
+  - Storage Account (with Blob) + Private Endpoint (attached to VNet)
+- **Naming**: Microsoft Cloud Adoption Framework (CAF) standards
+- **Tagging**: Consistent tags applied at Resource Group level (`Environment`, `ManagedBy`, `Project`, `Region`)
 
 ## Clean Code & Quality Process
-To maintain high code quality, consistency, and security, the following tools are used:
 
-- `terraform fmt` — Ensures consistent code formatting
-- `tflint` — Linting and Terraform best practices validation
-- `trivy` — Security and misconfiguration scanning
-- `terraform-docs` — Auto-generated module documentation
+- `terraform fmt` — code formatting
+- `tflint` — linting and best practices
+- `trivy` — security & misconfiguration scanning
+- `terraform-docs` — auto-generated module documentation
 
-## Terraform Plans
+## Deployment
+
+- GitHub Actions CI/CD pipeline with Azure OIDC authentication
+- Automatic deployment to Dev
+- Manual approval required for Prod
+- Plan artifacts are uploaded for easy review
+
+## Deliverables
+
 - [terraform-plan-dev.txt](./terraform-plan-dev.txt)
 - [terraform-plan-prod.txt](./terraform-plan-prod.txt)
+- Full GitHub Actions workflow: `.github/workflows/terraform-ci-cd.yml`
 
-## GitHub Pipeline
-See `.github/workflows/terraform-ci-cd.yml` (matrix strategy + OIDC + manual approval for prod).
+## How to use the VNet Module
+
+See `modules/vnet/README.md` (auto-generated).
+
+## Notes
+
+- All resources are free-tier friendly.
+- VM computer name is kept under 15 characters as per Azure limits.
+- In a real production environment, I would replace public IP with Azure Bastion, enable infrastructure encryption on Storage, and restrict NSG rules further.
+
+---
