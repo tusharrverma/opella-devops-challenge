@@ -1,2 +1,6 @@
-# Copy this file to environments/dev/terraform.tfvars and environments/prod/terraform.tfvars
-# (already done in your environments folders)
+# terraform.tfvars.example
+# This is a template file. Do NOT commit real values.
+# Copy this file to environments/dev/terraform.tfvars or environments/prod/terraform.tfvars
+
+location    = "eastus"     # or "westus"
+environment = "dev"        # or "prod"
