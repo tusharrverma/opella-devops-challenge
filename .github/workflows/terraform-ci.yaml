@@ -34,6 +34,18 @@ jobs:
         with:
           terraform_version: "~> 1.7.0"
 
+      # === Install Tools ===
+      - name: Install tflint
+        run: |
+          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+
+      - name: Install terraform-docs
+        run: |
+          wget https://github.com/terraform-docs/terraform-docs/releases/download/v0.19.0/terraform-docs-v0.19.0-linux-amd64.tar.gz
+          tar -xzf terraform-docs-v0.19.0-linux-amd64.tar.gz
+          chmod +x terraform-docs
+          sudo mv terraform-docs /usr/local/bin/
+
       # === Quality Checks ===
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
@@ -51,7 +63,6 @@ jobs:
           scan-type: config
           scan-ref: .
           format: table
-          exit-code: 1   # Fail only on critical/high issues if you want
 
       - name: Update Module Documentation
         run: |
@@ -94,13 +105,3 @@ jobs:
           git add terraform-plan-dev.txt terraform-plan-prod.txt
           git diff --cached --quiet || git commit -m "chore: auto-update terraform plan files"
           git push
-
-      # === Upload Quality Reports as Artifacts ===
-      - name: Upload Quality Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: quality-reports
-          path: |
-            *.log
-            trivy-report.*
