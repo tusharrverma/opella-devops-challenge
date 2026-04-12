@@ -1,4 +1,4 @@
-﻿
+
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   + create
@@ -37,7 +37,7 @@ Terraform will perform the following actions:
       + custom_dns_configs       = (known after apply)
       + id                       = (known after apply)
       + location                 = "westus"
-      + name                     = "pe-opella-storage-prod"
+      + name                     = "pe-opella-storage-prod-westus"
       + network_interface        = (known after apply)
       + private_dns_zone_configs = (known after apply)
       + resource_group_name      = "rg-opella-prod-westus"
@@ -77,6 +77,8 @@ Terraform will perform the following actions:
       + name     = "rg-opella-prod-westus"
       + tags     = {
           + "Environment" = "prod"
+          + "ManagedBy"   = "Terraform"
+          + "Project"     = "opella-challenge"
           + "Region"      = "westus"
         }
     }
@@ -99,7 +101,7 @@ Terraform will perform the following actions:
       + local_user_enabled                 = true
       + location                           = "westus"
       + min_tls_version                    = "TLS1_2"
-      + name                               = "stopellaprodwes"
+      + name                               = "stopellaprodwestus"
       + nfsv3_enabled                      = false
       + primary_access_key                 = (sensitive value)
       + primary_blob_connection_string     = (sensitive value)
@@ -179,22 +181,6 @@ Terraform will perform the following actions:
       + sftp_enabled                       = false
       + shared_access_key_enabled          = true
       + table_encryption_key_type          = "Service"
-      + tags                               = {
-          + "Environment" = "prod"
-          + "Region"      = "westus"
-        }
-
-      + blob_properties (known after apply)
-
-      + network_rules (known after apply)
-
-      + queue_properties (known after apply)
-
-      + routing (known after apply)
-
-      + share_properties (known after apply)
-
-      + static_website (known after apply)
     }
 
   # azurerm_windows_virtual_machine.this will be created
@@ -204,7 +190,7 @@ Terraform will perform the following actions:
       + allow_extension_operations                             = (known after apply)
       + automatic_updates_enabled                              = (known after apply)
       + bypass_platform_safety_checks_on_user_schedule_enabled = false
-      + computer_name                                          = (known after apply)
+      + computer_name                                          = "vmprodwestus"
       + disk_controller_type                                   = (known after apply)
       + enable_automatic_updates                               = (known after apply)
       + extensions_time_budget                                 = "PT1H30M"
@@ -225,11 +211,7 @@ Terraform will perform the following actions:
       + public_ip_address                                      = (known after apply)
       + public_ip_addresses                                    = (known after apply)
       + resource_group_name                                    = "rg-opella-prod-westus"
-      + size                                                   = "Standard_B1s"
-      + tags                                                   = {
-          + "Environment" = "prod"
-          + "Region"      = "westus"
-        }
+      + size                                                   = "Standard_DC1s_v3"
       + virtual_machine_id                                     = (known after apply)
       + vm_agent_platform_updates_enabled                      = (known after apply)
 
@@ -248,8 +230,6 @@ Terraform will perform the following actions:
           + sku       = "2022-datacenter-azure-edition"
           + version   = "latest"
         }
-
-      + termination_notification (known after apply)
     }
 
   # random_password.vm will be created
@@ -367,7 +347,7 @@ Terraform will perform the following actions:
 Plan: 14 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + storage_account_name = "stopellaprodwes"
+  + storage_account_name = "stopellaprodwestus"
   + vm_password          = (sensitive value)
   + vm_public_ip         = (known after apply)
   + vm_username          = "azureadmin"
