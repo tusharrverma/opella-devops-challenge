@@ -6,13 +6,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  # ============== DEV ENVIRONMENT ==============
   terraform-dev:
     name: Deploy to Dev
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+
+    env:
+      ARM_USE_OIDC: true
 
     steps:
       - uses: actions/checkout@v4
@@ -35,11 +37,10 @@ jobs:
           terraform init
           terraform plan -out=plan.tfplan
 
-      - name: Terraform Apply (Dev - Auto)
+      - name: Terraform Apply (Dev)
         working-directory: environments/dev
         run: terraform apply -auto-approve plan.tfplan
 
-  # ============== PROD ENVIRONMENT ==============
   terraform-prod:
     name: Deploy to Prod
     runs-on: ubuntu-latest
@@ -48,6 +49,9 @@ jobs:
     permissions:
       id-token: write
       contents: read
+
+    env:
+      ARM_USE_OIDC: true
 
     steps:
       - uses: actions/checkout@v4
@@ -70,6 +74,6 @@ jobs:
           terraform init
           terraform plan -out=plan.tfplan
 
-      - name: Terraform Apply (Prod - Manual Approval)
+      - name: Terraform Apply (Prod)
         working-directory: environments/prod
         run: terraform apply -auto-approve plan.tfplan
