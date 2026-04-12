@@ -21,7 +21,14 @@ terraform {
 }
 
 locals {
-  region_short = lower(substr(replace(var.location, " ", ""), 0, 3)) # eus / wus
+  # Proper region short codes (Microsoft standard)
+  region_short = {
+    "eastus" = "eus"
+    "westus" = "wus"
+  }[var.location]
+
+  # Short name for Storage Account (max 24 chars, lowercase)
+  storage_name = "stopella${var.environment}${local.region_short}"
 }
 
 resource "azurerm_resource_group" "this" {
@@ -70,6 +77,7 @@ resource "azurerm_network_interface" "vm" {
 
 resource "azurerm_windows_virtual_machine" "this" {
   name                = "vm-opella-${var.environment}-${replace(var.location, " ", "")}"
+  computer_name       = "vm${var.environment}${replace(var.location, " ", "")}"   # ≤ 15 chars
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   size                = "Standard_B1s"
@@ -93,13 +101,13 @@ resource "azurerm_windows_virtual_machine" "this" {
   tags = { Environment = var.environment, Region = var.location }
 }
 
-# Storage Account (CAF naming)
+# Storage Account
 resource "azurerm_storage_account" "this" {
-  name                          = "stopella${var.environment}${local.region_short}"
-  resource_group_name           = azurerm_resource_group.this.name
-  location                      = var.location
-  account_tier                  = "Standard"
-  account_replication_type      = "LRS"
+  name                     = local.storage_name
+  resource_group_name      = azurerm_resource_group.this.name
+  location                 = var.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
   public_network_access_enabled = false
 
   tags = { Environment = var.environment, Region = var.location }
@@ -107,7 +115,7 @@ resource "azurerm_storage_account" "this" {
 
 # Private Endpoint
 resource "azurerm_private_endpoint" "storage" {
-  name                = "pe-opella-storage-${var.environment}"
+  name                = "pe-opella-storage-${var.environment}-${local.region_short}"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = module.vnet.subnet_ids["private-endpoints"]
