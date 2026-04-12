@@ -1,4 +1,4 @@
-name: Terraform CI - Plan
+name: Terraform CI - Plan & Quality Checks
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  plan:
-    name: Terraform Plan
+  ci:
+    name: Terraform CI
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -34,8 +34,40 @@ jobs:
         with:
           terraform_version: "~> 1.7.0"
 
-      # === DEV PLAN ===
-      - name: Terraform Init & Plan (Dev)
+      # === Quality Checks ===
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      - name: TFLint
+        continue-on-error: true
+        run: |
+          tflint --init
+          tflint --recursive
+
+      - name: Trivy Security Scan
+        continue-on-error: true
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: config
+          scan-ref: .
+          format: table
+          exit-code: 1   # Fail only on critical/high issues if you want
+
+      - name: Update Module Documentation
+        run: |
+          cd modules/vnet
+          terraform-docs markdown table --output-file README.md --output-mode inject .
+
+      - name: Commit updated documentation
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add modules/vnet/README.md
+          git diff --cached --quiet || git commit -m "docs: auto-update VNet module documentation"
+          git push
+
+      # === Generate Plans ===
+      - name: Terraform Plan (Dev)
         working-directory: environments/dev
         run: |
           terraform init
@@ -45,8 +77,7 @@ jobs:
         working-directory: environments/dev
         run: terraform show -no-color plan.tfplan > ../../terraform-plan-dev.txt
 
-      # === PROD PLAN ===
-      - name: Terraform Init & Plan (Prod)
+      - name: Terraform Plan (Prod)
         working-directory: environments/prod
         run: |
           terraform init
@@ -56,7 +87,6 @@ jobs:
         working-directory: environments/prod
         run: terraform show -no-color plan.tfplan > ../../terraform-plan-prod.txt
 
-      # Commit updated plan files
       - name: Commit updated plan files
         run: |
           git config user.name "github-actions[bot]"
@@ -64,3 +94,13 @@ jobs:
           git add terraform-plan-dev.txt terraform-plan-prod.txt
           git diff --cached --quiet || git commit -m "chore: auto-update terraform plan files"
           git push
+
+      # === Upload Quality Reports as Artifacts ===
+      - name: Upload Quality Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: |
+            *.log
+            trivy-report.*

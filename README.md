@@ -11,32 +11,41 @@ Reusable Terraform module for Azure Virtual Network + multi-environment deployme
 - **Resources per environment**:
   - Resource Group (with consistent tags)
   - Virtual Network + Subnets + NSG (via reusable module)
-  - Windows Virtual Machine (`Standard_DC1s_v3`)
+  - Windows Virtual Machine
   - Storage Account (Blob) + Private Endpoint
 - **Naming**: Microsoft Cloud Adoption Framework (CAF) standards
-- **Tagging**: Applied at Resource Group level (`Environment`, `ManagedBy`, `Project`, `Region`)
+- **Tagging**: Applied only at Resource Group level (`Environment`, `ManagedBy`, `Project`, `Region`)
 
 ## Clean Code & Quality Process
 
-- `terraform fmt` — consistent formatting
+The following tools are automatically enforced in the CI pipeline:
+- `terraform fmt` — code formatting
 - `tflint` — linting and best practices
 - `trivy` — security and misconfiguration scanning
 - `terraform-docs` — auto-generated module documentation
 
-## Deployment
+## CI/CD Pipelines
 
-- GitHub Actions CI/CD pipeline with Azure OIDC
-- Automatic deployment to Dev
-- Manual approval required for Prod (proper release lifecycle)
+- **Separate CI and CD pipelines** (industry best practice)
+  - **`terraform-ci.yml`** → Runs on every push:
+    - Quality checks (`fmt`, `tflint`, `trivy`, `terraform-docs`)
+    - Terraform Plan for Dev and Prod
+    - Auto-generates and commits `terraform-plan-dev.txt` and `terraform-plan-prod.txt`
+  - **`terraform-cd.yml`** → Manual deployment:
+    - Apply to Dev
+    - Apply to Prod (with manual approval gate)
+
+- Both pipelines use **Azure OIDC** for secure authentication (no secrets stored in GitHub).
 
 ## Deliverables
 
-- [terraform-plan-dev.txt](./terraform-plan-dev.txt)
-- [terraform-plan-prod.txt](./terraform-plan-prod.txt)
-- Full pipeline: `.github/workflows/terraform-ci-cd.yml`
+- [terraform-plan-dev.txt](./terraform-plan-dev.txt) *(auto-updated by CI)*
+- [terraform-plan-prod.txt](./terraform-plan-prod.txt) *(auto-updated by CI)*
+- CI Pipeline: `.github/workflows/terraform-ci.yml`
+- CD Pipeline: `.github/workflows/terraform-cd.yml`
 
 ## Module Documentation
 
-See `modules/vnet/README.md` (generated with `terraform-docs`).
+See `modules/vnet/README.md` (auto-generated with `terraform-docs`).
 
 ---
