@@ -27,7 +27,6 @@ locals {
     "westus" = "wus"
   }[var.location]
 
-  # Short name for Storage Account (max 24 chars, lowercase)
   storage_name = "stopella${var.environment}${local.region_short}"
 }
 
@@ -77,10 +76,10 @@ resource "azurerm_network_interface" "vm" {
 
 resource "azurerm_windows_virtual_machine" "this" {
   name                = "vm-opella-${var.environment}-${replace(var.location, " ", "")}"
-  computer_name       = "vm${var.environment}${replace(var.location, " ", "")}"   # ≤ 15 chars
+  computer_name       = "vm${var.environment}${local.region_short}"   # Max 15 characters
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
-  size                = "Standard_B1s"
+  size                = "Standard_B2s"          # Changed from B1s (capacity issue)
   admin_username      = "azureadmin"
   admin_password      = random_password.vm.result
 
