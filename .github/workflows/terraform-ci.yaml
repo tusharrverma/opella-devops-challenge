@@ -1,0 +1,66 @@
+name: Terraform CI - Plan
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: write
+
+    env:
+      ARM_USE_OIDC: true
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~> 1.7.0"
+
+      # === DEV PLAN ===
+      - name: Terraform Init & Plan (Dev)
+        working-directory: environments/dev
+        run: |
+          terraform init
+          terraform plan -out=plan.tfplan
+
+      - name: Generate terraform-plan-dev.txt
+        working-directory: environments/dev
+        run: terraform show -no-color plan.tfplan > ../../terraform-plan-dev.txt
+
+      # === PROD PLAN ===
+      - name: Terraform Init & Plan (Prod)
+        working-directory: environments/prod
+        run: |
+          terraform init
+          terraform plan -out=plan.tfplan
+
+      - name: Generate terraform-plan-prod.txt
+        working-directory: environments/prod
+        run: terraform show -no-color plan.tfplan > ../../terraform-plan-prod.txt
+
+      # Commit updated plan files
+      - name: Commit updated plan files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add terraform-plan-dev.txt terraform-plan-prod.txt
+          git diff --cached --quiet || git commit -m "chore: auto-update terraform plan files"
+          git push
