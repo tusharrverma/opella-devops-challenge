@@ -76,10 +76,10 @@ resource "azurerm_network_interface" "vm" {
 
 resource "azurerm_windows_virtual_machine" "this" {
   name                = "vm-opella-${var.environment}-${replace(var.location, " ", "")}"
-  computer_name       = "vm${var.environment}${local.region_short}"   # Max 15 characters
+  computer_name       = "vm${var.environment}${local.region_short}"   # ≤ 15 characters
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
-  size                = "Standard_B2s"          # Changed from B1s (capacity issue)
+  size                = "Standard_B1ms"        # ← Changed to B1ms (more available)
   admin_username      = "azureadmin"
   admin_password      = random_password.vm.result
 
