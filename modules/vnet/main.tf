@@ -13,7 +13,7 @@ locals {
   vnet_name     = "vnet-opella-${var.environment}-${replace(var.location, " ", "")}"
   nsg_name      = "nsg-opella-${var.environment}-${replace(var.location, " ", "")}"
   subnet_prefix = "snet-opella-${var.environment}-${replace(var.location, " ", "")}"
-  tags          = merge(var.tags, {
+  tags = merge(var.tags, {
     Environment = var.environment
     ManagedBy   = "Terraform"
     Project     = "opella-challenge"
@@ -58,7 +58,7 @@ resource "azurerm_network_security_rule" "rdp" {
   protocol                    = "Tcp"
   source_port_range           = "*"
   destination_port_range      = "3389"
-  source_address_prefix        = "*"   # Demo only - In real prod use your IP or Azure Bastion
+  source_address_prefix       = "*" # Demo only - In real prod use your IP or Azure Bastion
   destination_address_prefix  = "*"
   resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.this[0].name
