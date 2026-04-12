@@ -20,18 +20,8 @@ terraform {
   }
 }
 
-locals {
-  # Standardized short region codes (consistent across all resources)
-  region_short = {
-    "eastus" = "eus"
-    "westus" = "wus"
-  }[var.location]
-
-  storage_name = "stopella${var.environment}${local.region_short}"
-}
-
 resource "azurerm_resource_group" "this" {
-  name     = "rg-opella-${var.environment}-${local.region_short}"
+  name     = "rg-opella-dev-eastus"
   location = var.location
   tags     = { Environment = var.environment, Region = var.location }
 }
@@ -52,17 +42,18 @@ resource "random_password" "vm" {
   override_special = "!@#$%&*()-_=+[]{}<>"
 }
 
-# Windows VM resources
+# Public IP
 resource "azurerm_public_ip" "vm" {
-  name                = "pip-opella-${var.environment}-${local.region_short}"
+  name                = "pip-opella-dev-eastus"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   allocation_method   = "Static"
   sku                 = "Standard"
 }
 
+# Network Interface
 resource "azurerm_network_interface" "vm" {
-  name                = "nic-opella-${var.environment}-${local.region_short}"
+  name                = "nic-opella-dev-eastus"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
 
@@ -74,9 +65,10 @@ resource "azurerm_network_interface" "vm" {
   }
 }
 
+# Windows VM
 resource "azurerm_windows_virtual_machine" "this" {
-  name                = "vm-opella-${var.environment}-${local.region_short}"
-  computer_name       = "vm${var.environment}${local.region_short}"   # Max 15 chars
+  name                = "vm-opella-dev-eastus"
+  computer_name       = "vmdeveastus"           # Max 15 characters
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   size                = "Standard_DC1s_v3"
@@ -102,7 +94,7 @@ resource "azurerm_windows_virtual_machine" "this" {
 
 # Storage Account
 resource "azurerm_storage_account" "this" {
-  name                     = "stopella${var.environment}${local.region_short}"
+  name                     = "stopelladeveastus"
   resource_group_name      = azurerm_resource_group.this.name
   location                 = var.location
   account_tier             = "Standard"
@@ -114,7 +106,7 @@ resource "azurerm_storage_account" "this" {
 
 # Private Endpoint
 resource "azurerm_private_endpoint" "storage" {
-  name                = "pe-opella-storage-${var.environment}-${local.region_short}"
+  name                = "pe-opella-storage-dev-eastus"
   location            = var.location
   resource_group_name = azurerm_resource_group.this.name
   subnet_id           = module.vnet.subnet_ids["private-endpoints"]
