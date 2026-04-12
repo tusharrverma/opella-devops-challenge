@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Azure Login (OIDC)
+      - name: Azure Login (OIDC - secure, no secrets stored)
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
@@ -32,14 +32,13 @@ jobs:
         with:
           terraform_version: "~> 1.7.0"
 
-      - name: Terraform Init & Plan (${{ matrix.environment }})
+      - name: Terraform Init & Plan
         working-directory: environments/${{ matrix.environment }}
         run: |
           terraform init
           terraform plan -out=plan.tfplan
 
-      # Optional: Upload plan so it's visible in GitHub UI
-      - name: Upload Terraform Plan
+      - name: Upload Terraform Plan (for easy review)
         if: always()
         uses: actions/upload-artifact@v4
         with:
