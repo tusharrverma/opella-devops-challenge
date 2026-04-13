@@ -257,12 +257,6 @@ Terraform will perform the following actions:
       + name                = "nsg-opella-prod-westus"
       + resource_group_name = "rg-opella-prod-westus"
       + security_rule       = (known after apply)
-      + tags                = {
-          + "Environment" = "prod"
-          + "ManagedBy"   = "Terraform"
-          + "Project"     = "opella-challenge"
-          + "Region"      = "westus"
-        }
     }
 
   # module.vnet.azurerm_network_security_rule.rdp[0] will be created
@@ -336,12 +330,6 @@ Terraform will perform the following actions:
       + private_endpoint_vnet_policies = "Disabled"
       + resource_group_name            = "rg-opella-prod-westus"
       + subnet                         = (known after apply)
-      + tags                           = {
-          + "Environment" = "prod"
-          + "ManagedBy"   = "Terraform"
-          + "Project"     = "opella-challenge"
-          + "Region"      = "westus"
-        }
     }
 
 Plan: 14 to add, 0 to change, 0 to destroy.
