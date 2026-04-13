@@ -1,4 +1,69 @@
 
+Note: Objects have changed outside of Terraform
+
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+  # azurerm_network_interface.vm has been deleted
+  - resource "azurerm_network_interface" "vm" {
+      - id                             = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus/providers/Microsoft.Network/networkInterfaces/nic-opella-prod-westus" -> null
+        name                           = "nic-opella-prod-westus"
+        # (8 unchanged attributes hidden)
+
+        # (1 unchanged block hidden)
+    }
+
+  # azurerm_public_ip.vm has been deleted
+  - resource "azurerm_public_ip" "vm" {
+      - id                      = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus/providers/Microsoft.Network/publicIPAddresses/pip-opella-prod-westus" -> null
+      - ip_address              = "20.59.126.237" -> null
+        name                    = "pip-opella-prod-westus"
+        # (8 unchanged attributes hidden)
+    }
+
+  # azurerm_resource_group.this has been deleted
+  - resource "azurerm_resource_group" "this" {
+        id       = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus"
+      - name     = "rg-opella-prod-westus" -> null
+        tags     = {
+            "Environment" = "prod"
+            "ManagedBy"   = "Terraform"
+            "Project"     = "opella-challenge"
+            "Region"      = "westus"
+        }
+        # (1 unchanged attribute hidden)
+    }
+
+  # azurerm_storage_account.this has been deleted
+  - resource "azurerm_storage_account" "this" {
+      - id                                = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus/providers/Microsoft.Storage/storageAccounts/stopellaprodwestus" -> null
+        name                              = "stopellaprodwestus"
+        # (40 unchanged attributes hidden)
+
+        # (3 unchanged blocks hidden)
+    }
+
+  # module.vnet.azurerm_network_security_group.this[0] has been deleted
+  - resource "azurerm_network_security_group" "this" {
+      - id                  = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus/providers/Microsoft.Network/networkSecurityGroups/nsg-opella-prod-westus" -> null
+      - name                = "nsg-opella-prod-westus" -> null
+        # (3 unchanged attributes hidden)
+    }
+
+  # module.vnet.azurerm_virtual_network.this has been deleted
+  - resource "azurerm_virtual_network" "this" {
+      - id                             = "/subscriptions/99e3831f-3671-49e1-b7e7-7ebd84720b1b/resourceGroups/rg-opella-prod-westus/providers/Microsoft.Network/virtualNetworks/vnet-opella-prod-westus" -> null
+      - name                           = "vnet-opella-prod-westus" -> null
+        # (8 unchanged attributes hidden)
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+
+─────────────────────────────────────────────────────────────────────────────
+
 Terraform used the selected providers to generate the following execution
 plan. Resource actions are indicated with the following symbols:
   + create
@@ -232,24 +297,6 @@ Terraform will perform the following actions:
         }
     }
 
-  # random_password.vm will be created
-  + resource "random_password" "vm" {
-      + bcrypt_hash      = (sensitive value)
-      + id               = (known after apply)
-      + length           = 16
-      + lower            = true
-      + min_lower        = 0
-      + min_numeric      = 0
-      + min_special      = 0
-      + min_upper        = 0
-      + number           = true
-      + numeric          = true
-      + override_special = "!@#$%&*()-_=+[]{}<>"
-      + result           = (sensitive value)
-      + special          = true
-      + upper            = true
-    }
-
   # module.vnet.azurerm_network_security_group.this[0] will be created
   + resource "azurerm_network_security_group" "this" {
       + id                  = (known after apply)
@@ -332,10 +379,7 @@ Terraform will perform the following actions:
       + subnet                         = (known after apply)
     }
 
-Plan: 14 to add, 0 to change, 0 to destroy.
+Plan: 13 to add, 0 to change, 0 to destroy.
 
 Changes to Outputs:
-  + storage_account_name = "stopellaprodwestus"
-  + vm_password          = (sensitive value)
-  + vm_public_ip         = (known after apply)
-  + vm_username          = "azureadmin"
+  ~ vm_public_ip         = "20.59.126.237" -> (known after apply)
