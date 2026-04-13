@@ -11,15 +11,15 @@ Reusable Terraform module for Azure Virtual Network + multi-environment deployme
 - **Resources per environment**:
   - Resource Group (with consistent tags)
   - Virtual Network + Subnets + NSG (via reusable module)
-  - Windows Virtual Machine
+  - Windows Virtual Machine (`Standard_DC1s_v3`)
   - Storage Account (Blob) + Private Endpoint
 - **Naming**: Microsoft Cloud Adoption Framework (CAF) standards
-- **Tagging**: Applied only at Resource Group level (`Environment`, `ManagedBy`, `Project`, `Region`)
+- **Tagging**: Applied **at Resource Group level** (`Environment`, `ManagedBy`, `Project`, `Region`)
 
 ## Clean Code & Quality Process
 
 The following tools are automatically enforced in the CI pipeline:
-- `terraform fmt` — validate code formatting
+- `terraform fmt` — code formatting validation
 - `tflint` — linting and best practices
 - `trivy` — security and misconfiguration scanning
 - `terraform-docs` — auto-generated module documentation
@@ -29,7 +29,7 @@ The following tools are automatically enforced in the CI pipeline:
 - **Separate CI and CD pipelines** (industry best practice)
   - **`terraform-ci.yml`** → Runs on every push:
     - Quality checks (`fmt`, `tflint`, `trivy`, `terraform-docs`)
-    - Terraform Plan for Dev and Prod
+    - Terraform Plan for both environments
     - Auto-generates and commits `terraform-plan-dev.txt` and `terraform-plan-prod.txt`
   - **`terraform-cd.yml`** → Manual deployment:
     - Apply to Dev
