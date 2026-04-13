@@ -11,7 +11,7 @@ Reusable Terraform module for Azure Virtual Network + multi-environment deployme
 - **Resources per environment**:
   - Resource Group (with consistent tags)
   - Virtual Network + Subnets + NSG (via reusable module)
-  - Windows Virtual Machine (`Standard_DC1s_v3`)
+  - Windows Virtual Machine
   - Storage Account (Blob) + Private Endpoint
 - **Naming**: Microsoft Cloud Adoption Framework (CAF) standards
 - **Tagging**: Applied **at Resource Group level** (`Environment`, `ManagedBy`, `Project`, `Region`)
