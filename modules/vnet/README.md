@@ -36,7 +36,6 @@ No modules.
 | <a name="input_location"></a> [location](#input\_location) | Azure region | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | Resource Group name | `string` | n/a | yes |
 | <a name="input_subnets"></a> [subnets](#input\_subnets) | Map of subnets (name => config) | <pre>map(object({<br/>    address_prefixes                  = list(string)<br/>    private_endpoint_network_policies = string<br/>  }))</pre> | <pre>{<br/>  "app": {<br/>    "address_prefixes": [<br/>      "10.0.1.0/24"<br/>    ],<br/>    "private_endpoint_network_policies": "Disabled"<br/>  },<br/>  "private-endpoints": {<br/>    "address_prefixes": [<br/>      "10.0.2.0/24"<br/>    ],<br/>    "private_endpoint_network_policies": "NetworkSecurityGroupEnabled"<br/>  }<br/>}</pre> | no |
-| <a name="input_tags"></a> [tags](#input\_tags) | Additional tags | `map(string)` | `{}` | no |
 
 ## Outputs
 
