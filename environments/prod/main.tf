@@ -38,7 +38,6 @@ module "vnet" {
   location            = var.location
   environment         = var.environment
   resource_group_name = azurerm_resource_group.this.name
-  tags                = { Environment = var.environment, Region = var.location }
 }
 
 # Random password

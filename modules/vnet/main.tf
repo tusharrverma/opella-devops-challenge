@@ -13,11 +13,6 @@ locals {
   vnet_name     = "vnet-opella-${var.environment}-${replace(var.location, " ", "")}"
   nsg_name      = "nsg-opella-${var.environment}-${replace(var.location, " ", "")}"
   subnet_prefix = "snet-opella-${var.environment}-${replace(var.location, " ", "")}"
-  tags = merge(var.tags, {
-    Environment = var.environment
-    ManagedBy   = "Terraform"
-    Project     = "opella-challenge"
-  })
 }
 
 resource "azurerm_virtual_network" "this" {
@@ -25,7 +20,6 @@ resource "azurerm_virtual_network" "this" {
   location            = var.location
   resource_group_name = var.resource_group_name
   address_space       = var.address_space
-  tags                = local.tags
 }
 
 resource "azurerm_subnet" "this" {
@@ -45,7 +39,6 @@ resource "azurerm_network_security_group" "this" {
   name                = local.nsg_name
   location            = var.location
   resource_group_name = var.resource_group_name
-  tags                = local.tags
 }
 
 resource "azurerm_network_security_rule" "rdp" {
